@@ -4,6 +4,7 @@ date:   2020-05-20 15:04:23
 categories: [react]
 tags: [react, react-query]
 ---
+O react-query é uma biblioteca para fazer fetching em APIs com um gerenciamento de estado seguindo uma metodologia diferente do que estamos habituados a ver que é a famigerada **arquitetura flux**
 
 ![React Query](https://react-query.tanstack.com/\_next/static/images/logo-a65f848e05592e7de1dc2150454230fa.svg)
 
