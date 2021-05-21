@@ -25,7 +25,7 @@ npm install react-query
 yarn add react-query
 ```
 
-#### Criando o provider:
+### Criando o provider:
 
 A primeira coisa que precisamos é envolver nossa aplicação em um provider para que ela tenha acesso às funcionalidades do react-query. 
 **Irei fazer um post falando a respeito de abstração de providers mais pra frente** por aqui mesmo. Isso vai possibilitar termos um provider genérico que abstrai a inclusão de um novo provider sempre que for fazer um teste unitário ou qualquer outra coisa que necessite de um provider com **QueryClient** diferente. 
@@ -73,10 +73,12 @@ function MyApp() {
 
 ````
 
-#### Configurando um componente simples:
+
+### Configurando um componente simples:
+
 Para servir de exemplo, vamos simular que temos uma requisição simples usando **axios**, vou usar um exemplo de uma API que retorna dados da NBA (pq gosto mt 🤓): 
 
-```javascript
+```JSX
 import axios from 'axios';
 
 export const getNBAStats = () => {
@@ -87,7 +89,7 @@ export const getNBAStats = () => {
 
 Agora vamos criar nosso componente, no final vou deixar um bônus que pode servir de melhoria na organização das queries e requests. 
 
-````typescript
+````JSX
 import React from 'react'; 
 import { getNBAStats } from 'myAPi';
 
@@ -105,6 +107,89 @@ function FakeApi() {
 }
 ````
 
-#### Lidando com feedbacks:
-O react-query disponibiliza pra nós alguns status da query, com isso conseguimos fazer um handler melhor dos status, são eles: 
-```success```, ```error```, ```idle``` e ```loading```
+### Keys
+As mutations (você verá a seguir) e as queries são identificadas no cache do react-query com **keys**, com estas keys é possível invalidar a query e ao ser invalidada, a query automaticamente vai no server-side buscar o novo dado. Com as keys também é possível identificar o dado em cache. 
+
+### Lidando com feedbacks:
+
+O react-query disponibiliza pra nós alguns status da **query** ou a **mutation**, com isso conseguimos fazer um handler melhor dos status, são eles: 
+```success```, ```error```, ```idle``` e ```loading``` ou existem flags também disponíveis: 
+-   `isIdle` ou `status === 'idle'` \- A query/mutation não está sendo utilizada
+-   `isLoading` ou `status === 'loading'` \- A query/mutation está realizando a ação determinada a ela
+-   `isError` ou `status === 'error'` \- A query/mutation encontrou um erro
+-   `isSuccess` ou `status === 'success'` \- A query/mutation realizou o designado com sucesso
+
+
+Sendo assim, o tratamento dos feedbacks pode ser utilizado da seguinte forma: 
+```JSX
+import React from 'react'; 
+import { getNBAStats } from 'myAPi';
+import { LoadingComponent } from './components/LoadingComponent/;
+import { useQuery } from 'react-query'; 
+
+function FakeApi() {
+	const NBAQuery = useQuery('NBAQueryKey', getNBAStats) // Vamos falar desta key jajá
+	
+	if(NBAQuery.status === 'loading') return <LoadingComponent />
+	
+	if(NBAQuery.status === 'error') return <ErrorComponent />
+	
+	if(NBAQuery.status === 'success' && !NBAQuery.data.length) return <NoContent />
+	
+	return (
+		<>
+			{NBAQuery.data.map(nbaStats => (
+				<div key={nbaStats.id}>
+					{nbaStats.points}
+				</div>
+			))}
+		</>
+	)
+}
+```
+
+### Mutations
+
+Uma mutation basicamente é utilizada para fazer algum tipo de alteração no server-side (perceba como a mágica do react-query flui automaticamente). O comando para utilizar-se mutations é o ```useMutation```.
+Uma mutation é invocada quando chamamos o método ```mutate()```.
+Vamos usar como exemplo uma mutation que vai 'adicionar um jogador' em nossa API:
+````JSX
+import React from 'react';
+import { useMutation } from 'react-query'; 
+import axios from 'axios';
+
+function AddPlayer() {
+	const playerMutation = useMutation(newPlayer => axios.post('newPlayer', newPlayer));
+	
+	if(playerMutation.status === 'loading') return <LoadingComponent />
+	
+	if(playerMutation.status === 'error') return <ErrorHandler />
+	
+	if(playerMutation.status === 'success') return <span>Jogador adicionado com sucesso</span>
+	
+	return (
+		<button 
+			onClick={() => { playerMutation.mutate({ name: 'Michael Jordan', age: 18 })}}
+		>Adicionar jogador
+		</button>
+	)
+}
+````
+
+
+### Funções de uma mutation
+Digamos que temos uma mutation na qual sempre que ela faça uma request com sucesso eu quero disparar alguma outra ação, sendo assim, definimos a query com a função ```onSuccess()```, vamos também incluir algumas outras funções: 
+
+```javascript
+export function addPlayerMutation(data) {
+	return useMutation(() => axios.post('newPlayer', data), {
+		mutationKey: 'newPlayerMutation', 
+		onError: (error) => {
+			console.log(error);
+		}, 
+		onSuccess: () => {
+			alert('success');
+		}
+	})
+}
+```
