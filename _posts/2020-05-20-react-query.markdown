@@ -1,5 +1,3 @@
-      
-
 ---
 title:  "O poder do react-query e em que ele pode me ajudar"
 date:   2020-05-20 15:04:23
