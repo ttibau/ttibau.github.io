@@ -78,7 +78,7 @@ function MyApp() {
 
 Para servir de exemplo, vamos simular que temos uma requisição simples usando **axios**, vou usar um exemplo de uma API que retorna dados da NBA (pq gosto mt 🤓): 
 
-```JSX
+```javascript
 import axios from 'axios';
 
 export const getNBAStats = () => {
@@ -89,7 +89,7 @@ export const getNBAStats = () => {
 
 Agora vamos criar nosso componente, no final vou deixar um bônus que pode servir de melhoria na organização das queries e requests. 
 
-````JSX
+````javascript
 import React from 'react'; 
 import { getNBAStats } from 'myAPi';
 
@@ -121,7 +121,7 @@ O react-query disponibiliza pra nós alguns status da **query** ou a **mutation*
 
 
 Sendo assim, o tratamento dos feedbacks pode ser utilizado da seguinte forma: 
-```JSX
+```javascript
 import React from 'react'; 
 import { getNBAStats } from 'myAPi';
 import { LoadingComponent } from './components/LoadingComponent/;
@@ -153,7 +153,7 @@ function FakeApi() {
 Uma mutation basicamente é utilizada para fazer algum tipo de alteração no server-side (perceba como a mágica do react-query flui automaticamente). O comando para utilizar-se mutations é o ```useMutation```.
 Uma mutation é invocada quando chamamos o método ```mutate()```.
 Vamos usar como exemplo uma mutation que vai 'adicionar um jogador' em nossa API:
-````JSX
+````javascript
 import React from 'react';
 import { useMutation } from 'react-query'; 
 import axios from 'axios';
@@ -181,6 +181,9 @@ function AddPlayer() {
 Digamos que temos uma mutation na qual sempre que ela faça uma request com sucesso eu quero disparar alguma outra ação, sendo assim, definimos a query com a função ```onSuccess()```, vamos também incluir algumas outras funções: 
 
 ```javascript
+import { useMutation } from 'react-query'; 
+import axios from 'axios';
+
 export function addPlayerMutation(data) {
 	return useMutation(() => axios.post('newPlayer', data), {
 		mutationKey: 'newPlayerMutation', 
@@ -193,3 +196,33 @@ export function addPlayerMutation(data) {
 	})
 }
 ```
+
+
+### Invalidando uma query
+Em qualquer lugar da aplicação abaixo do nosso provider nós conseguimos tanto acessar dados no cache quanto invalidar uma query já feita para que o dado possa ser atualizado. Num exemplo bem simples, podemos fazer uma funcionalidade em que no momento que um jogador pontuar, queremos invalidar a query que busca a lista de jogadores para que a lista possa vir refletida com o que se encontra no server-side. 
+**Ah Tibau, mas não é só no retorno da API de inserção retornar a nova lista**, eh, até podemos, mas iremos perder a ideia do componente ser o mais genérico possível: 
+
+```javascript
+import { useQueryClient, useMutation } from 'react-query';
+import axios from 'axios';
+
+const queryClient = useQueryClient();
+
+export function addPoint(data) {
+	return useMutation(() => axios.post('addPoint', data), {
+		mutationKey: 'addPoint', 
+		onError: (error) => {
+			console.log(error);
+		}, 
+		onSuccess: () => {
+			// Lembra nossa query lá no começo do tutorial? 
+			// Vamos invalidar ela e os dados serão atualizados automaticamente
+			// MAGIC 🌟 nós não precisamos fazer uma nova implementação de uma
+			// request ou chamar uma query, é só invalidar:
+			queryClient.invalidateQueries('NBAQueryKey')
+		}
+	})
+}
+```
+
+Ou seja, toda vez que ao inserir um ponto, no sucesso da inserção, eu buscarei novos dados do servidor. 
