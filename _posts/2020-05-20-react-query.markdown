@@ -8,9 +8,6 @@ O react-query é uma biblioteca para fazer fetching em APIs com um gerenciamento
 
 ![React Query](https://react-query.tanstack.com/\_next/static/images/logo-a65f848e05592e7de1dc2150454230fa.svg)
 
-  
-
-## O poder do react-query e em que ele pode me ajudar.
 
 O grande problema da arquitetura flux é que ela acaba criando uma cópia do estado do server-side no client-side e o frontend acaba manipulando esta cópia criada, o que pode acarretar em problemas se o client-side não refletir em algum momento corretamente esse estado para o server-side.
 
@@ -242,3 +239,7 @@ Pode ser que seja mais interessante separar as requests do axios das queries, em
 
 #### Tibau, discordo, tenho dúvida, critica ou sugestão, como faço para te xingar? 
 Manda um e-mail pra mim hehe: ttibaudev@gmail.com
+
+### Considerações finais
+É minha primeira vez escrevendo sobre algo de tecnologia, com isso, me perdoe se o conteúdo não ficou muito claro. Espero melhorar a cada dia mais e criar uma rotina que me permite estar sempre escrevendo algo por aqui (mesmo que ninguém leia haha). 
+Um agradecimento especial para meu amigo Adeildo que me apresentou a biblioteca e me 'forçou' a sair da zona de conforto (flux) para traçar novos horizontes.
