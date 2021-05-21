@@ -16,7 +16,12 @@ O grande problema da arquitetura flux é que ela acaba criando uma cópia do est
 
 Com isso, o react-query além de resolver este problema, consegue salvar em cache nossas responses, quando precisamos do dado atualizado basta dar um **invalidate** que a query é recarregada automaticamente. Veremos isso mais pra frente para tornar mais claro. 
 
+**Por que salvar em cache?**
+Uma das estratégias do react-query de salvar em cache é que em cache nao precisa renderizar um componente ao menos que esse cache altere.
+
 Como o intuito deste post é ter mais um **hands-on**, vamos por a mão na massa para tornar o post mais dinâmico 😊. 
+
+Lembrando que se discordarem/tiverem alguma dúvida, crítica ou sugestão, só me mandar um e-mail que a gente troca uma idéia.
 
 #### Instalando o react query:
 ```
@@ -87,7 +92,7 @@ export const getNBAStats = () => {
 }
 ```
 
-Agora vamos criar nosso componente, no final vou deixar um bônus que pode servir de melhoria na organização das queries e requests. 
+Agora vamos criar nosso componente, no final vou deixar um **bônus** que pode servir de melhoria na organização das queries e requests. 
 
 ````javascript
 import React from 'react'; 
@@ -177,7 +182,8 @@ function AddPlayer() {
 ````
 
 
-### Funções de uma mutation
+### Funções de uma mutation:
+
 Digamos que temos uma mutation na qual sempre que ela faça uma request com sucesso eu quero disparar alguma outra ação, sendo assim, definimos a query com a função ```onSuccess()```, vamos também incluir algumas outras funções: 
 
 ```javascript
@@ -198,7 +204,8 @@ export function addPlayerMutation(data) {
 ```
 
 
-### Invalidando uma query
+### Invalidando uma query:
+
 Em qualquer lugar da aplicação abaixo do nosso provider nós conseguimos tanto acessar dados no cache quanto invalidar uma query já feita para que o dado possa ser atualizado. Num exemplo bem simples, podemos fazer uma funcionalidade em que no momento que um jogador pontuar, queremos invalidar a query que busca a lista de jogadores para que a lista possa vir refletida com o que se encontra no server-side. 
 **Ah Tibau, mas não é só no retorno da API de inserção retornar a nova lista**, eh, até podemos, mas iremos perder a ideia do componente ser o mais genérico possível: 
 
@@ -226,3 +233,12 @@ export function addPoint(data) {
 ```
 
 Ou seja, toda vez que ao inserir um ponto, no sucesso da inserção, eu buscarei novos dados do servidor. 
+
+### Bônus:
+Deixei pro final algumas coisas não obrigatórias nos estudos de react-query que eu acho que é bacana ser discutido:
+
+#### Organização das queries:
+Pode ser que seja mais interessante separar as requests do axios das queries, em alguns casos, é legal ter como organização uma request axios genérica pronta aonde todos as queries/mutations chamam ela. 
+
+#### Tibau, discordo, tenho dúvida, critica ou sugestão, como faço para te xingar? 
+Manda um e-mail pra mim hehe: ttibaudev@gmail.com
