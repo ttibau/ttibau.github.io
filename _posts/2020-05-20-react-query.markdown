@@ -124,7 +124,7 @@ Sendo assim, o tratamento dos feedbacks pode ser utilizado da seguinte forma:
 ```javascript
 import React from 'react'; 
 import { getNBAStats } from 'myAPi';
-import { LoadingComponent } from './components/LoadingComponent/;
+import { LoadingComponent } from './components/LoadingComponent';
 import { useQuery } from 'react-query'; 
 
 function FakeApi() {
